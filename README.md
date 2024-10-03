@@ -47,6 +47,7 @@ Run the programs directly by:
 ```
 $ cd bin
 $ ./<program_name>
+```
 
 Replace <program_name> with program of your choice. The programs can also be edited using a text editor and compiling it:
 
