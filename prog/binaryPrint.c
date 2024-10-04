@@ -2,7 +2,9 @@
 void printBytes(void *, unsigned long long);
 
 int main(int argc, char *argv[]) {
-  float var = 20.2;
+  int var;
+  printf("Enter an integer: ");
+  scanf("%d", &var);
   printBytes(&var, sizeof(var));
   return 0;
 }

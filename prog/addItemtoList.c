@@ -18,7 +18,7 @@ int main() {
     return 1;
   }
   int amount;
-  printf("Enter number of integers to add to list:\n");
+  printf("Enter number of items to add to list:\n");
   scanf("%d", &amount);
   for (int i = 0; i < amount; i++) addItemtoList(&myList, i + 1);
   printf("Items inside list are:\n");
