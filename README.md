@@ -19,7 +19,7 @@ sudo pacman -S neovim
 ```
 ### Compiler
 
-There are many choices for compilers for C/C++ like clang, llvm, gcc. I primarily use clang for C/C++ programs.
+There are many choices for compilers for C/C++ like Clang, LLVM, Gcc. I primarily use clang for C/C++ programs.
 
 ```
 sudo pacman -S clang
@@ -42,20 +42,25 @@ cd cprograms
 
 ## Compiling Programs
 
-Run the programs directly by:
-
-```
-cd bin
-./<program_name>
-```
-
-Replace <program_name> with program of your choice. The programs can also be edited using a text editor and compiling it:
+View and edit a program:
 
 ```
 nvim prog/<program_name>
-clang prog/<program_name>.c -o clang prog/<program_name>
-./bin/<program_name>
 ```
 
-Replace nvim and clang with text editor and compiler(syntax may differ) of your choice. In case you are compiling a C++ program, replace clang with clang++ and '.c' with '.cpp' to work.
+then make a directory for binaries and compile program using clang:
 
+```
+mkdir bin
+clang --debug prog/<program_name.c> -o clang prog/<program_name.o>
+```
+
+Finally run the program:
+
+```
+./bin/<program_name.o>
+```
+
+Replace clang with compiler of your choice(syntax may differ). In case you are compiling a C++ program, replace clang with clang++ and '.c' with '.cpp' to work.
+
+It is recommended to define an alias/function in your Shell's RC file to avoid working with these tedious commands.
