@@ -1,7 +1,7 @@
 #include <ctype.h>
 #include <stdio.h>
 
-enum bool {
+enum boolean {
   FALSE,
   TRUE,
 };
@@ -13,7 +13,7 @@ enum game_state {
 };
 
 // markers will contain information provided by players
-int state;
+enum game_state state;
 char markers[10];
 
 // Function Declarations
@@ -24,10 +24,10 @@ void returnBuffer(void);
 void clrscr(void);
 void checkGameState(void);
 void getInput(int);
-int endGameMessage(void);
+enum boolean endGameMessage(void);
 
 int main() {
-  int x = TRUE;
+  enum boolean x = TRUE;
   alternateBuffer();
   clrscr();
   printRules(printGrid);
@@ -53,20 +53,23 @@ int main() {
 
 void printGrid() {
   printf("\n");
-  printf("        %c | %c | %c    \n", markers[0], markers[1], markers[2]);
-  printf("      ----o---o----     \n");
-  printf("        %c | %c | %c    \n", markers[3], markers[4], markers[5]);
-  printf("      ----o---o----     \n");
-  printf("        %c | %c | %c  \n\n", markers[6], markers[7], markers[8]);
-  printf("");
+  printf("\e[1;31m        %c\e[0;33m |\e[1;31m %c\e[0;33m |\e[1;31m %c    \n",
+         markers[0], markers[1], markers[2]);
+  printf("\e[0;33m      ----o---o----     \n");
+  printf("\e[1;31m        %c\e[0;33m |\e[1;31m %c\e[0;33m |\e[1;31m %c    \n",
+         markers[3], markers[4], markers[5]);
+  printf("\e[0;33m      ----o---o----     \n");
+  printf("\e[1;31m        %c\e[0;33m |\e[1;31m %c\e[0;33m |\e[1;31m %c  \n\n",
+         markers[6], markers[7], markers[8]);
+  printf("\e[1;37m");
 }
 
 void printRules(void (*callback)(void)) {
-  printf("");
+  printf("\e[0;32m");
   printf("o-----------------------o\n");
   printf("|      Tic Tac Toe      |\n");
   printf("o-----------------------o\n");
-  printf("");
+  printf("\e[1;37m");
 
   // Initialize Array markers with '1', '2', '3',..., '9'
   for (int i = 0; i < 9; i++)
@@ -75,14 +78,14 @@ void printRules(void (*callback)(void)) {
 
   callback();  // printGrid()
   printf(
-      "Player 1 is X and Player "
-      "two "
-      "is O.\n\n");
+      "\e[1;34mPlayer 1\e[1;37m is\e[1;31m X\e[1;37m and\e[1;32m Player "
+      "two\e[1;37m "
+      "is\e[1;31m O\e[1;37m.\n\n");
 
   // Continue only if y/Y is pressed
   char buffer[50] = {0};
   while (toupper(buffer[0]) != 'Y') {
-    printf("Press Y to continue: ");
+    printf("Press \e[1;37mY\e[1;37m to continue: \e[0m");
     fgets(buffer, sizeof(buffer), stdin);
   }
 }
@@ -93,7 +96,7 @@ void alternateBuffer() {
 }
 
 void returnBuffer() {
-  printf("\e[?1049l");
+  printf("\e[2J\e[H\e[?1049l");
   fflush(stdout);
 }
 
@@ -143,13 +146,13 @@ void checkGameState() {
 
 // variable counter is used to keep track of players' turns
 void getInput(int counter) {
-  int x = TRUE;
+  enum boolean x = TRUE;
   char buffer[50];
   if (state == INPROGRESS) {
     buffer[0] = 0;
     if (counter % 2 == 0) {
       while (x == TRUE) {
-        printf("Player 1 to Move: ");
+        printf("\e[1;34mPlayer 1 to Move: \e[0m");
         fgets(buffer, sizeof(buffer), stdin);
         // Check if buffer[0] is a non-zero digit by comparing its ASCII code
         if ((int)buffer[0] > 48 && (int)buffer[0] <= 57) {
@@ -158,13 +161,13 @@ void getInput(int counter) {
               markers[(buffer[0] - '0') - 1] != 'O') {
             x = FALSE;
           } else
-            printf("The slot is already filled. \n\n");
+            printf("\e[0;31mThe slot is already filled. \e[1;37m\n\n");
         }
       }
       markers[(buffer[0] - '0') - 1] = 'X';
     } else {
       while (x == TRUE) {
-        printf("Player 2 to Move: ");
+        printf("\e[1;32mPlayer 2 to Move: \e[0m");
         fgets(buffer, sizeof(buffer), stdin);
         // Check if buffer[0] is a non-zero digit by comparing its ASCII code
         if ((int)buffer[0] > 48 && (int)buffer[0] <= 57) {
@@ -173,7 +176,7 @@ void getInput(int counter) {
               markers[buffer[0] - '0' - 1] != 'O') {
             x = FALSE;
           } else
-            printf("The slot is already filled.\n\n");
+            printf("\e[0;31mThe slot is already filled.\e[1;37m\n\n");
         }
       }
       markers[(buffer[0] - '0') - 1] = 'O';
@@ -181,26 +184,28 @@ void getInput(int counter) {
   }
 }
 
-int endGameMessage() {
+enum boolean endGameMessage() {
   char buffer[50] = {0};
   switch (state) {
     case DRAW:
-      printf("The Game is a Draw\n\n");
+      printf("\e[1;33mThe Game is a Draw\e[1;37m\n\n");
       break;
 
     case X_WINS:
-      printf("Player 1 Wins!\n\n");
+      printf("\e[1;34mPlayer 1 Wins!\e[1;37m\n\n");
       break;
 
     case O_WINS:
-      printf("Player 2 Wins!\n\n");
+      printf("\e[1;32mPlayer 2 Wins!\e[1;37m\n\n");
+      break;
+    case INPROGRESS:
       break;
   }
 
   // Get Input
-  int x = TRUE;
+  enum boolean x = TRUE;
   while (x == TRUE) {
-    printf("Press Y to play again or N to exit: ");
+    printf("\e[1;37mPress Y to play again or N to exit: \e[0m");
     fgets(buffer, sizeof(buffer), stdin);
     if (toupper(buffer[0]) == 'Y')
       x = FALSE;
@@ -208,7 +213,7 @@ int endGameMessage() {
       x = FALSE;
   }
 
-  // Return Boolean Expression
+  // Return boolean Expression
   if (toupper(buffer[0]) == 'Y')
     return TRUE;
   else
