@@ -79,13 +79,13 @@ public:
   float getRadius() { return r; }
 };
 
-void alternateBuffer();
+void switchBuffer();
 void returnToBuffer();
 void clrscr();
 void printMenu();
+void getInput(void *, unsigned long, const string);
 void getAllInputs(menu_options, void (*)(void *, unsigned long, const string),
                   float *, float *, float *);
-void getInput(void *, unsigned long, const string);
 void printOutput(float, float);
 
 int main(int argc, char *argv[]) {
@@ -96,7 +96,7 @@ int main(int argc, char *argv[]) {
   unsigned short input;
   bool x = true;
   float a, b, c;
-  alternateBuffer();
+  switchBuffer();
 
   do {
     clrscr();
@@ -135,15 +135,25 @@ int main(int argc, char *argv[]) {
       break;
 
     default:
-      cout << "Invalid input. Try again" << endl;
+      string anyKey;
+      cout << "Invalid input. Try again" << "\n\n";
+      cout << "Press any key to retry: ";
+      getline(cin, anyKey);
     }
   } while (x == true);
+  returnToBuffer();
   return 0;
 }
 
-void alternateBuffer() { cout << "\e[?1049h"; }
-void returnToBuffer() { cout << "\e[?1049l"; }
-void clrscr() { cout << "\e[2J\e[H"; }
+void switchBuffer() { cout << "\e[?1049h"; }
+
+void returnToBuffer() {
+  cout << "\e[2J\e[H";
+  cout << "\e[?1049l";
+}
+
+void clrscr() { cout << "\e[2J\e[H" << endl; }
+
 void printMenu() {
   cout << "Choose one of the following shape:" << endl;
   cout << "1) Rectangle" << endl;
@@ -152,7 +162,7 @@ void printMenu() {
   cout << "4) Exit Program" << "\n\n";
 }
 
-void getInput(void *num, unsigned long size, const string message) {
+void getInput(void *num, unsigned long size, string message) {
   bool x = true;
   string inputInString;
   int nonNumCount, dotCount;
@@ -174,6 +184,8 @@ void getInput(void *num, unsigned long size, const string message) {
        empty */
       if (!(inputInString.empty()) && nonNumCount == 0) {
         x = false;
+      } else {
+        cout << "Invalid input. Enter a positive number." << "\n\n";
       }
     }
     // Check for float data type
@@ -194,6 +206,8 @@ void getInput(void *num, unsigned long size, const string message) {
        empty, or if it has more than one dots(.) */
       if (!(inputInString.empty()) && nonNumCount == 0 && dotCount <= 1) {
         x = false;
+      } else {
+        cout << "Invalid input. Enter a positive number." << "\n\n";
       }
     }
   } while (x == true);
