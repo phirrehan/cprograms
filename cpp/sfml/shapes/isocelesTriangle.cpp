@@ -1,0 +1,44 @@
+#include <SFML/Graphics.hpp>
+
+int main() {
+  // create window
+  sf::RenderWindow window(sf::VideoMode({800,600}), "SFML", sf::Style::Default);
+
+  // create shape
+  sf::ConvexShape shape;
+  shape.setFillColor(sf::Color(154,47,171));
+  shape.setOutlineColor(sf::Color(127,38,139));
+  shape.setOutlineThickness(20.f);
+  shape.setPosition({400.f, 400.f});
+
+  // set points
+  float base   = 400.f,
+        height = 200.f;
+  shape.setPointCount(3);
+  shape.setPoint(0, {-base/2, 0.f});
+  shape.setPoint(1, {0.f, -height});
+  shape.setPoint(2, {base/2, 0.f});
+
+  // keep window open
+  while (window.isOpen()) {
+    // handle events
+    while (std::optional event = window.pollEvent()) {
+      if (event->is<sf::Event::Closed>()) {
+        window.close();
+      } else if(event->is<sf::Event::Resized>()) {
+        sf::View view(sf::FloatRect({0.f,0.f}, sf::Vector2f(window.getSize())));
+        window.setView(view);
+      }
+    }
+
+    // clear
+    window.clear(sf::Color(127,127,127));
+    
+    // draw
+    window.draw(shape);
+    
+    // display
+    window.display();
+  }
+  return 0;
+}

@@ -1,0 +1,48 @@
+#include <SFML/Graphics.hpp>
+
+int main() {
+  // create window
+  sf::RenderWindow window(sf::VideoMode({800,600}), "SFML", sf::Style::Default);
+
+  // create shape
+  sf::ConvexShape shape;
+  shape.setFillColor(sf::Color(154,47,171));
+  shape.setOutlineColor(sf::Color(127,38,139));
+  shape.setOutlineThickness(20.f);
+  shape.setPosition({400.f, 300.f});
+
+  // set points
+  int   sides  = 60;
+  float radius = 200.f,
+        angle  = 360.f / sides, // angle is central angle of regular polygon
+        offset = 0.f;
+  shape.setPointCount(sides);
+  for (int i = 0; i < sides; i++) {
+    sf::Vector2f position(radius, sf::degrees(angle * i - offset));
+    position.x *= 1.5f;
+    shape.setPoint(i, position);
+  }
+
+  // keep window open
+  while (window.isOpen()) {
+    // handle events
+    while (std::optional event = window.pollEvent()) {
+      if (event->is<sf::Event::Closed>()) {
+        window.close();
+      } else if(event->is<sf::Event::Resized>()) {
+        sf::View view(sf::FloatRect({0.f,0.f}, sf::Vector2f(window.getSize())));
+        window.setView(view);
+      }
+    }
+
+    // clear
+    window.clear(sf::Color(127,127,127));
+    
+    // draw
+    window.draw(shape);
+    
+    // display
+    window.display();
+  }
+  return 0;
+}
