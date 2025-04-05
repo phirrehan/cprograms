@@ -1,116 +1,105 @@
 #include <iostream>
-#include <string>
 
 using namespace std;
 
-// Function Declarations
-void nameInit(char, int, int, int, int);
-void boardInit();
-void returnBuffer();
+// Function Prototypes
+void setPiecePos(int, char, int, int, int);
+void init();
+void setBoard();
 void alternateBuffer();
-void clrscr();
 void printBoard();
+void clrscr();
+void returnBuffer();
 
-// Structures
+// Structure for position of a piece in board
 struct piecePos {
   char name;
-  int row;
-  int col;
+  int  row;
+  int  col;
 };
 
-// Global Variables
-char board[8][8];
+// Global Arrays
+char     board[8][8];
 piecePos white_pieces[16];
 piecePos black_pieces[16];
 
-// Classes
-class Piece {
-public:
-  void setRow(int r) { row = r; }
-  void setCol(int c) { col = c; }
-  int getRow() { return row; }
-  int getCol() { return col; }
-  int getIndex() { return index; }
-
-  /* bool return type indicates if move() was successfull
-   * or not depending on its parameters */
-  bool move(int x, int y); // Move piece to (x,y) position
-  bool take(int x, int y); // Take piece to (x,y) position
-  void show();             // Show available moves with *
-protected:
-  int index;    // Index for struct array
-  int row;      // Horizontal position in 8x8 board
-  int col;      // Vertical position in 8x8 board
-  string color; // Can be black or white
-  void setBoard(int r, int c, char pieceInitial) {
-    board[row][col] = ' ';      // Change initial position to space
-    board[r][c] = pieceInitial; // Add pieceInitial at final position
-    if (color == "white") {
-      white_pieces[index].row = r;
-      white_pieces[index].col = c;
-    } else {
-      black_pieces[index].row = r;
-      black_pieces[index].col = c;
-    }
-  }
-};
-
 int main() {
-  boardInit();
-  printBoard();
+  string var;
+  bool isGameEnded = false;
+  init();
+  setBoard();
+  alternateBuffer();
+  while (! isGameEnded) {
+    printBoard();
+    cin >> var;
+    clrscr();
+    isGameEnded = true;
+  }
+  returnBuffer();
   return 0;
 }
 
-/* For initializing board array and white/black_pieces structs
- * in the boardInit() function */
-void nameInit(char name, int index,
-    int row_black, int row_white, int col) {
-  black_pieces[index].name = name;
-  board[row_black][col] = name;
+void setPiecePos(int index, char name, int wRow, int bRow, int col) {
   white_pieces[index].name = name;
-  board[row_white][col] = name;
+  white_pieces[index].row = wRow;
+  white_pieces[index].col = col;
+  black_pieces[index].name = name;
+  black_pieces[index].row = bRow;
+  black_pieces[index].col = col;
 }
-// Initialize the board array for starting chess positions
-void boardInit() {
-  // Put in spaces from A6 to H3
-  fill(&board[2][0], &board[6][0], ' ');
 
-  // Pawns
-  int i;
-  for (i = 0; i < 8; i++) {
-    // Row and Column variables
-    white_pieces[i].row = 6;
-    white_pieces[i].col = i;
-    black_pieces[i].row = 1;
-    black_pieces[i].col = i;
-
-    // Name variables
-    nameInit('P', i, 1, 6, i);
-  }
-
-  // Rest of the Pieces
-  for (i = 8; i < 16; i++) {
-    // Row/Col
-    int col = i - 8;
-    black_pieces[i].row = 0;
-    black_pieces[i].col = col;
-    white_pieces[i].row = 7;
-    white_pieces[i].col = col;
-
-    // Names
-    if (col == 0 || col == 7) {
-      nameInit('R', i, 0, 7, col); // Rooks
-    } else if (col == 1 || col == 6) {
-      nameInit('N', i, 0, 7, col); // Knights
-    } else if (col == 2 || col == 5) {
-      nameInit('B', i, 0, 7, col); // Bishops
-    } else if (col == 3) {
-      nameInit('Q', i, 0, 7, col); // Queen
-    } else if (col == 4) {
-      nameInit('K', i, 0, 7, col); // King
+void init() {
+  for (int i = 0; i < 16; i++) {
+    int j = i - 8;
+    switch (i) {
+      case 0 ... 7:
+        setPiecePos(i, 'P', 6, 1, i); break;
+      case 8:
+      case 15:
+        setPiecePos(i, 'R', 7, 0, j);
+        break;
+      case 9:
+      case 14:
+        setPiecePos(i, 'N', 7, 0, j);
+        break;
+      case 10:
+      case 13:
+        setPiecePos(i, 'B', 7, 0, j);
+        break;
+      case 11:
+        setPiecePos(i, 'Q', 7, 0, j);
+        break;
+      case 12:
+        setPiecePos(i, 'K', 7, 0, j);
     }
   }
 }
+
+void setBoard() {
+  // set black pieces
+  for (int j = 0; j < 2; j++)
+    for (int i = 0; i < 8; i++) {
+      if (j == 0)
+        board[j][i] = black_pieces[i+8].name;
+      else
+        board[j][i] = black_pieces[i].name;
+    }
+
+  // set empty spaces
+  for (int j = 2; j < 6; j++)
+    for (int i = 0; i < 8; i++)
+      board[j][i] = ' ';
+
+  // set white pieces
+  for (int j = 6; j < 8; j++)
+    for (int i = 0; i < 8; i++) {
+      if (j == 6)
+        board[j][i] = white_pieces[i].name;
+      else
+        board[j][i] = white_pieces[i+8].name;
+    }
+}
+
 void printBoard() {
   /*
       A   B   C   D   E   F   G   H
@@ -130,7 +119,7 @@ void printBoard() {
   2 | P | P | P | P | P | P | P | P |
     |‾‾‾|‾‾‾|‾‾‾|‾‾‾|‾‾‾|‾‾‾|‾‾‾|‾‾‾|
   1 | R | N | B | Q | K | B | N | R |
-     ‾‾‾ ‾‾‾ ‾‾‾ ‾‾‾ ‾‾‾ ‾‾‾ ‾‾‾ ‾‾‾
+     ‾‾‾ ‾‾‾ ‾‾‾ ‾‾‾ ‾‾‾ ‾‾‾ ‾‾‾ ‾‾‾ 
   */
 
   // Display the above commented board
