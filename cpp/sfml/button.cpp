@@ -1,6 +1,4 @@
 #include <SFML/Graphics.hpp>
-#include <SFML/System/Vector2.hpp>
-#include <SFML/Window/Mouse.hpp>
 #include <iostream>
 
 int main() {
@@ -12,7 +10,7 @@ int main() {
   settings.antiAliasingLevel = 4;
 
   // create window
-  sf::RenderWindow window(sf::VideoMode({800, 600}), "SFML",
+  sf::RenderWindow window(sf::VideoMode({ 800, 600 }), "SFML",
                           sf::State::Windowed, settings);
   // create shape of button
   sf::RectangleShape shape;
@@ -32,7 +30,7 @@ int main() {
         window.close();
       } else if (event->is<sf::Event::Resized>()) {
         sf::View view(
-            sf::FloatRect({0.f, 0.f}, sf::Vector2f(window.getSize())));
+            sf::FloatRect({ 0.f, 0.f }, sf::Vector2f(window.getSize())));
         window.setView(view);
       }
     }
@@ -74,7 +72,7 @@ int main() {
     window.clear(sf::Color(39, 39, 39));
 
     // draw
-    DrawButton({size * 2.5f, size * 0.8f}, {window_w / 2, window_h / 2});
+    DrawButton({ size * 2.5f, size * 0.8f }, { window_w / 2, window_h / 2 });
 
     // display
     window.display();

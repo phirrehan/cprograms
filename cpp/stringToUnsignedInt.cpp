@@ -30,7 +30,7 @@ int main() {
     }
 
     // Get input again if it contains a non numeric character or if it's empty
-    if (!(inputInString.empty()) && nonNumCount == 0) {
+    if (!inputInString.empty() && nonNumCount == 0) {
       x = false;
     }
   } while (x == true);

@@ -14,12 +14,12 @@ void returnBuffer();
 // Structure for position of a piece in board
 struct piecePos {
   char name;
-  int  row;
-  int  col;
+  int row;
+  int col;
 };
 
 // Global Arrays
-char     board[8][8];
+char board[8][8];
 piecePos white_pieces[16];
 piecePos black_pieces[16];
 
@@ -29,7 +29,7 @@ int main() {
   init();
   setBoard();
   alternateBuffer();
-  while (! isGameEnded) {
+  while (!isGameEnded) {
     printBoard();
     cin >> var;
     clrscr();
@@ -52,25 +52,26 @@ void init() {
   for (int i = 0; i < 16; i++) {
     int j = i - 8;
     switch (i) {
-      case 0 ... 7:
-        setPiecePos(i, 'P', 6, 1, i); break;
-      case 8:
-      case 15:
-        setPiecePos(i, 'R', 7, 0, j);
-        break;
-      case 9:
-      case 14:
-        setPiecePos(i, 'N', 7, 0, j);
-        break;
-      case 10:
-      case 13:
-        setPiecePos(i, 'B', 7, 0, j);
-        break;
-      case 11:
-        setPiecePos(i, 'Q', 7, 0, j);
-        break;
-      case 12:
-        setPiecePos(i, 'K', 7, 0, j);
+    case 0 ... 7:
+      setPiecePos(i, 'P', 6, 1, i);
+      break;
+    case 8:
+    case 15:
+      setPiecePos(i, 'R', 7, 0, j);
+      break;
+    case 9:
+    case 14:
+      setPiecePos(i, 'N', 7, 0, j);
+      break;
+    case 10:
+    case 13:
+      setPiecePos(i, 'B', 7, 0, j);
+      break;
+    case 11:
+      setPiecePos(i, 'Q', 7, 0, j);
+      break;
+    case 12:
+      setPiecePos(i, 'K', 7, 0, j);
     }
   }
 }
@@ -80,7 +81,7 @@ void setBoard() {
   for (int j = 0; j < 2; j++)
     for (int i = 0; i < 8; i++) {
       if (j == 0)
-        board[j][i] = black_pieces[i+8].name;
+        board[j][i] = black_pieces[i + 8].name;
       else
         board[j][i] = black_pieces[i].name;
     }
@@ -96,7 +97,7 @@ void setBoard() {
       if (j == 6)
         board[j][i] = white_pieces[i].name;
       else
-        board[j][i] = white_pieces[i+8].name;
+        board[j][i] = white_pieces[i + 8].name;
     }
 }
 
@@ -119,7 +120,7 @@ void printBoard() {
   2 | P | P | P | P | P | P | P | P |
     |‾‾‾|‾‾‾|‾‾‾|‾‾‾|‾‾‾|‾‾‾|‾‾‾|‾‾‾|
   1 | R | N | B | Q | K | B | N | R |
-     ‾‾‾ ‾‾‾ ‾‾‾ ‾‾‾ ‾‾‾ ‾‾‾ ‾‾‾ ‾‾‾ 
+     ‾‾‾ ‾‾‾ ‾‾‾ ‾‾‾ ‾‾‾ ‾‾‾ ‾‾‾ ‾‾‾
   */
 
   // Display the above commented board

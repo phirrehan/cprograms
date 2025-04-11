@@ -3,9 +3,11 @@
 int main() {
 
   // state of grid
-  char state[3][3] = {{' ', ' ', ' '}, {' ', ' ', ' '}, {' ', ' ', ' '}};
+  char state[3][3] = { { ' ', ' ', ' ' },
+                       { ' ', ' ', ' ' },
+                       { ' ', ' ', ' ' } };
 
-  // position of cursor
+  // position of cursor in middlel of grid
   int cursor_x = 1, cursor_y = 1;
 
   // turn
@@ -14,10 +16,12 @@ int main() {
   // winner
   char winner = ' '; // possible values are ' ', 'D', 'X', 'O' where D is draw
 
+  // create anti aliasing settings
   sf::ContextSettings settings;
   settings.antiAliasingLevel = 4;
+
   // create window
-  sf::RenderWindow window(sf::VideoMode({800, 600}), "TicTacToe",
+  sf::RenderWindow window(sf::VideoMode({ 800, 600 }), "TicTacToe",
                           sf::State::Windowed, settings);
 
   // create shapes
@@ -29,30 +33,30 @@ int main() {
   // lambda function draw grid
   auto DrawGrid = [&](float space, float width, float position_x,
                       float position_y) {
-    line.setSize({space * 3, width});
+    line.setSize({ space * 3, width });
     line.setOrigin(line.getGeometricCenter());
     line.setFillColor(sf::Color(128, 128, 128));
     // horizontal
     line.setRotation(sf::degrees(0.f));
-    line.setPosition({position_x, position_y - space / 2});
+    line.setPosition({ position_x, position_y - space / 2 });
     window.draw(line);
-    line.setPosition({position_x, position_y + space / 2});
+    line.setPosition({ position_x, position_y + space / 2 });
     window.draw(line);
     // vertical
     line.setRotation(sf::degrees(90.f));
-    line.setPosition({position_x - space / 2, position_y});
+    line.setPosition({ position_x - space / 2, position_y });
     window.draw(line);
-    line.setPosition({position_x + space / 2, position_y});
+    line.setPosition({ position_x + space / 2, position_y });
     window.draw(line);
   };
 
   // lambda function draw X
   auto DrawX = [&](float size, float width, float position_x,
                    float position_y) {
-    line.setSize({size, width});
+    line.setSize({ size, width });
     line.setOrigin(line.getGeometricCenter());
     line.setFillColor(sf::Color(0, 255, 90));
-    line.setPosition({position_x, position_y});
+    line.setPosition({ position_x, position_y });
     line.setRotation(sf::degrees(45.f));
     window.draw(line);
     line.setRotation(sf::degrees(-45.f));
@@ -67,17 +71,17 @@ int main() {
     circle.setFillColor(sf::Color::Transparent);
     circle.setOutlineColor(sf::Color(0, 140, 255));
     circle.setOutlineThickness(-width);
-    circle.setPosition({position_x, position_y});
+    circle.setPosition({ position_x, position_y });
     window.draw(circle);
   };
 
   // lambda function draw winning line
   auto DrawWinningLine = [&](float size, float width, float position_x,
                              float position_y, float angle, float scale = 1.f) {
-    line.setSize({size * scale, width});
+    line.setSize({ size * scale, width });
     line.setOrigin(line.getGeometricCenter());
     line.setFillColor(sf::Color(241, 197, 85));
-    line.setPosition({position_x, position_y});
+    line.setPosition({ position_x, position_y });
     line.setRotation(sf::degrees(angle));
     window.draw(line);
   };
@@ -85,12 +89,12 @@ int main() {
   // lambda function draw cursor
   auto DrawCursor = [&](float size, float width, float position_x,
                         float position_y) {
-    cursor.setSize({size, size});
+    cursor.setSize({ size, size });
     cursor.setOrigin(cursor.getGeometricCenter());
     cursor.setFillColor(sf::Color::Transparent);
     cursor.setOutlineColor(sf::Color(241, 197, 85));
     cursor.setOutlineThickness(-width);
-    cursor.setPosition({position_x, position_y});
+    cursor.setPosition({ position_x, position_y });
     window.draw(cursor);
   };
 
@@ -102,9 +106,11 @@ int main() {
         window.close();
       } else if (event->is<sf::Event::Resized>()) {
         sf::View view(
-            sf::FloatRect({0.f, 0.f}, sf::Vector2f(window.getSize())));
+            sf::FloatRect({ 0.f, 0.f }, sf::Vector2f(window.getSize())));
         window.setView(view);
-      } else if (auto *key = event->getIf<sf::Event::KeyPressed>()) {
+      }
+      // keyboard input
+      else if (auto *key = event->getIf<sf::Event::KeyPressed>()) {
         if (winner == ' ') {
           // move cursor with WSAD or arrow keys
           if ((key->scancode == sf::Keyboard::Scancode::A ||
@@ -147,6 +153,17 @@ int main() {
           winner = ' ';
           is_X_turn = true;
         }
+      } else if (auto *mouse = event->getIf<sf::Event::MouseButtonPressed>()) {
+        if (winner == ' ') {
+          if (mouse->button == sf::Mouse::Button::Left &&
+              state[cursor_y][cursor_x] == ' ') {
+            if (is_X_turn)
+              state[cursor_y][cursor_x] = 'X';
+            else
+              state[cursor_y][cursor_x] = 'O';
+            is_X_turn = !(is_X_turn);
+          }
+        }
       }
     }
 
@@ -158,12 +175,14 @@ int main() {
     // parameters
     float space = 0.3f * window_min, // size of a cell
         size = 0.8f * space,         // size of mark
-        width = 0.1f * size;         // width of line
+        width = 0.1f * size;         // width of shapes
+                             // width is also 2 * thickness of line/cursor
+    auto mouse_position = sf::Vector2f(sf::Mouse::getPosition(window));
+    float gridStart_x = window_w / 2 - space * (1.5f),
+          gridStart_y = window_h / 2 - space * (1.5f);
 
     // fill window with color
     window.clear(sf::Color(39, 39, 39));
-
-    // draw
 
     // grid
     DrawGrid(space, width / 2, window_w / 2, window_h / 2);
@@ -180,6 +199,18 @@ int main() {
                 window_h / 2 + space * (j - 1));
       }
     }
+
+    // move cursor with mouse
+    for (int r = 0; r < 3; r++)
+      for (int c = 0; c < 3; c++) {
+        if ((gridStart_x + space * c <= mouse_position.x &&
+             mouse_position.x <= gridStart_x + space * (c + 1)) and
+            (gridStart_y + space * r <= mouse_position.y &&
+             mouse_position.y <= gridStart_y + space * (r + 1))) {
+          cursor_x = c;
+          cursor_y = r;
+        }
+      }
 
     // draw winning line
     for (int i = 0; i < 3; i++) {
@@ -226,8 +257,8 @@ int main() {
   exit_loop:
 
     if (winner == ' ')
-      DrawCursor(space, width / 2, window_w / 2 + space * (cursor_x - 1),
-                 window_h / 2 + space * (cursor_y - 1));
+      DrawCursor(space, width / 2, gridStart_x + space * (cursor_x + 0.5f),
+                 gridStart_y + space * (cursor_y + 0.5f));
 
     // display
     window.display();
