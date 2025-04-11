@@ -13,6 +13,9 @@ int main() {
   // turn
   bool is_X_turn = true;
 
+  // mouse over grid
+  bool isMouseOver = false;
+
   // winner
   char winner = ' '; // possible values are ' ', 'D', 'X', 'O' where D is draw
 
@@ -142,7 +145,7 @@ int main() {
         }
 
         // restart if R or Enter is pressed
-        if ((key->scancode == sf::Keyboard::Scancode::R ||
+        if ((key->scancode == sf::Keyboard::Scancode::Space ||
              key->scancode == sf::Keyboard::Scancode::Enter) &&
             winner != ' ') {
           for (int j = 0; j < 3; j++)
@@ -153,8 +156,8 @@ int main() {
           winner = ' ';
           is_X_turn = true;
         }
-      } else if (auto *mouse = event->getIf<sf::Event::MouseButtonPressed>()) {
-        if (winner == ' ') {
+      } else if (auto *mouse = event->getIf<sf::Event::MouseButtonReleased>()) {
+        if (winner == ' ' && isMouseOver) {
           if (mouse->button == sf::Mouse::Button::Left &&
               state[cursor_y][cursor_x] == ' ') {
             if (is_X_turn)
@@ -199,6 +202,15 @@ int main() {
                 window_h / 2 + space * (j - 1));
       }
     }
+
+    // set isMouseOver
+    if ((gridStart_x <= mouse_position.x &&
+         mouse_position.x <= gridStart_x + space * 3) and
+        (gridStart_y <= mouse_position.y &&
+         mouse_position.y <= gridStart_y + space * 3))
+      isMouseOver = true;
+    else
+      isMouseOver = false;
 
     // move cursor with mouse
     for (int r = 0; r < 3; r++)
